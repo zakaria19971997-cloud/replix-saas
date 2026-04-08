@@ -35,8 +35,10 @@ COPY . .
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --optimize-autoloader --no-dev --no-interaction --no-scripts
 
-# JS assets build
-RUN npm install && npm run build
+# JS assets build (build all themes)
+RUN npm install \
+    && npm run build --theme=guest/waziper \
+    && npm run build --theme=app/pico
 
 # Permissions
 RUN chown -R www-data:www-data /var/www/html \
