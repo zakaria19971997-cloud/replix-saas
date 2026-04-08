@@ -28,8 +28,8 @@ function loadEnv($path)
 }
 
 $env = loadEnv(__DIR__.'/../.env');
-// Check Railway env var first, then fall back to .env file
-$appInstalled = getenv('APP_INSTALLED') ?: ($env['APP_INSTALLED'] ?? null);
+// .env file is authoritative (installer writes it); fall back to process env
+$appInstalled = $env['APP_INSTALLED'] ?? getenv('APP_INSTALLED');
 if ( (!$appInstalled && $appInstalled !== 'true' ) || strtolower($appInstalled) === 'false') {
     $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
     header('Location: ' . $basePath . '/installer/');

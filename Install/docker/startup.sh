@@ -3,6 +3,15 @@
 echo "==> Generating .env from Railway environment variables..."
 php -r "
 \$envFile = '/var/www/html/.env';
+
+// Preserve APP_INSTALLED=true from a previous run (survives container restarts)
+\$alreadyInstalled = false;
+if (file_exists(\$envFile)) {
+    foreach (file(\$envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as \$line) {
+        if (trim(\$line) === 'APP_INSTALLED=true') { \$alreadyInstalled = true; break; }
+    }
+}
+
 \$keys = [
     'APP_NAME','APP_ENV','APP_KEY','APP_DEBUG','APP_URL','APP_TIMEZONE',
     'APP_LOCALE','APP_FALLBACK_LOCALE','APP_INSTALLED',
@@ -19,6 +28,7 @@ php -r "
 \$lines = [];
 foreach (\$keys as \$key) {
     \$val = getenv(\$key);
+    if (\$key === 'APP_INSTALLED' && \$alreadyInstalled) { \$val = 'true'; }
     if (\$val !== false && \$val !== '') {
         if (preg_match('/[\s\#\"]/', \$val)) {
             \$val = '\"' . str_replace(['\\\\', '\"'], ['\\\\\\\\', '\\\\\"'], \$val) . '\"';
