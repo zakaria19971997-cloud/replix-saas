@@ -14,9 +14,6 @@ $postHandler = function (Request $request) {
     $data = json_decode($request->getContent(), true);
 
     $errors = [];
-    if (empty($data['purchase_code'])) {
-        $errors['purchase_code'] = 'Purchase code is required';
-    }
     if (empty($data['site_name'])) {
         $errors['site_name'] = 'Site name is required';
     }
@@ -54,35 +51,6 @@ $postHandler = function (Request $request) {
             'success' => false,
             'message' => 'Validation error',
             'errors'  => $errors
-        ]);
-    }
-
-    $domain = $request->header('host', '');
-    if (empty($domain)) {
-        $url = url('/');
-        $parsed = parse_url($url);
-        $domain = $parsed['host'] ?? 'localhost';
-    }
-    $domain = preg_replace('/^www\./', '', $domain);
-    $purchaseCode = trim(preg_replace('/\s+/', '', $data['purchase_code']));
-    $verifyUrl = 'https://stackposts.com/api/marketplace/install';
-
-    $response = Http::withoutVerifying()
-        ->timeout(15)
-        ->post($verifyUrl, [
-            'purchase_code' => $purchaseCode,
-            'domain'        => $domain,
-            'website'       => url('/'),
-            'is_main'       => 1
-        ]);
-
-    $verifyResult = $response->json();
-
-    if (!$response->ok() || ($verifyResult['status'] ?? 0) != 1) {
-        return new JsonResponse([
-            'success' => false,
-            'message' => $verifyResult['message'] ?? 'Purchase verification failed!',
-            'errors'  => ['purchase_code' => $verifyResult['message'] ?? 'Purchase code invalid!']
         ]);
     }
 
@@ -184,11 +152,11 @@ $postHandler = function (Request $request) {
     }
 
     insertPurchaseAddon($pdo, [
-        'product_id'    => $verifyResult['product_id'],
+        'product_id'    => 1,
         'module_name'   => 'main',
-        'purchase_code' => $data['purchase_code'],
-        'version'       => $verifyResult['version'] ?? '1.0',
-        'install_path'  => $verifyResult['install_path'] ?? '',
+        'purchase_code' => 'activated',
+        'version'       => '1.0',
+        'install_path'  => '',
     ]);
 
     // Persist APP_INSTALLED=true to Railway env vars so it survives redeployments
