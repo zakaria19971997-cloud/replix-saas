@@ -98,7 +98,7 @@
                 </div>
                 <div class="form-group">
                     <label class="block mb-2 text-slate-700 font-semibold">Database Password</label>
-                    <input name="database_password" class="config-input database-password w-full py-3 px-4 text-slate-600 leading-tight placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 border border-slate-300 rounded-xl shadow-sm transition-all duration-200 focus:shadow-md" type="password" placeholder="Enter your database password"/>
+                    <input name="database_password" class="config-input database-password w-full py-3 px-4 text-slate-600 leading-tight placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 border border-slate-300 rounded-xl shadow-sm transition-all duration-200 focus:shadow-md" type="password" placeholder="Enter your database password" value="{{ getenv('DB_PASSWORD') ?: '' }}"/>
                 </div>
             </div>
         </div>
