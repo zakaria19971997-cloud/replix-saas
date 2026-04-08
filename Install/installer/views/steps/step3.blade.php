@@ -105,15 +105,15 @@
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="form-group">
                     <label class="block mb-2 text-slate-700 font-semibold">Database Host</label>
-                    <input name="database_host" class="config-input database-host w-full py-3 px-4 text-slate-600 leading-tight placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 border border-slate-300 rounded-xl shadow-sm transition-all duration-200 focus:shadow-md" type="text" placeholder="Enter your database host" value="localhost"/>
+                    <input name="database_host" class="config-input database-host w-full py-3 px-4 text-slate-600 leading-tight placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 border border-slate-300 rounded-xl shadow-sm transition-all duration-200 focus:shadow-md" type="text" placeholder="Enter your database host" value="{{ getenv('DB_HOST') ?: 'localhost' }}"/>
                 </div>
                 <div class="form-group">
                     <label class="block mb-2 text-slate-700 font-semibold">Database Name</label>
-                    <input name="database_name" class="config-input database-name w-full py-3 px-4 text-slate-600 leading-tight placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 border border-slate-300 rounded-xl shadow-sm transition-all duration-200 focus:shadow-md" type="text" placeholder="Enter your database name"/>
+                    <input name="database_name" class="config-input database-name w-full py-3 px-4 text-slate-600 leading-tight placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 border border-slate-300 rounded-xl shadow-sm transition-all duration-200 focus:shadow-md" type="text" placeholder="Enter your database name" value="{{ getenv('DB_DATABASE') ?: '' }}"/>
                 </div>
                 <div class="form-group">
                     <label class="block mb-2 text-slate-700 font-semibold">Database Username</label>
-                    <input name="database_username" class="config-input database-username w-full py-3 px-4 text-slate-600 leading-tight placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 border border-slate-300 rounded-xl shadow-sm transition-all duration-200 focus:shadow-md" type="text" placeholder="Enter your database username"/>
+                    <input name="database_username" class="config-input database-username w-full py-3 px-4 text-slate-600 leading-tight placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 border border-slate-300 rounded-xl shadow-sm transition-all duration-200 focus:shadow-md" type="text" placeholder="Enter your database username" value="{{ getenv('DB_USERNAME') ?: '' }}"/>
                 </div>
                 <div class="form-group">
                     <label class="block mb-2 text-slate-700 font-semibold">Database Password</label>

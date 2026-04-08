@@ -1,15 +1,16 @@
 <?php
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\File;
 
-$this->router->get('/', function (Request $request) {
+// GET: show installer form
+$getHandler = function (Request $request) {
     return view('install');
-});
+};
 
-$this->router->post('/', function (Request $request) {
+// POST: process installation
+$postHandler = function (Request $request) {
     $data = json_decode($request->getContent(), true);
 
     $errors = [];
@@ -17,7 +18,7 @@ $this->router->post('/', function (Request $request) {
         $errors['purchase_code'] = 'Purchase code is required';
     }
     if (empty($data['site_name'])) {
-        $errors['site_name'] = 'Site name is required'; 
+        $errors['site_name'] = 'Site name is required';
     }
     if (empty($data['timezone'])) {
         $errors['timezone'] = 'Full name is required';
@@ -84,47 +85,6 @@ $this->router->post('/', function (Request $request) {
             'errors'  => ['purchase_code' => $verifyResult['message'] ?? 'Purchase code invalid!']
         ]);
     }
-
-    /*$downloadUrl = $verifyResult['download_url'] ?? null;
-    $installPath = base_path($verifyResult['install_path'] ?? '');
-    if ($downloadUrl) {
-        if (!is_dir($installPath)) {
-            File::makeDirectory($installPath, 0775, true);
-        }
-
-        if (!is_dir(storage_path('app'))) {
-            \File::makeDirectory( storage_path('app'), 0775, true);
-        }
-        $tmpZip = storage_path('app/installer_' . uniqid() . '.zip');
-        try {
-            $fileResponse = Http::withoutVerifying()->timeout(60)->get($downloadUrl);
-            if (!$fileResponse->ok()) {
-                throw new \Exception('Download failed with status code: ' . $fileResponse->status());
-            }
-            file_put_contents($tmpZip, $fileResponse->body());
-        } catch (\Exception $e) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Download failed: ' . $e->getMessage(),
-                'errors'  => ['download_url' => 'Download failed!']
-            ]);
-        }
-
-
-        $zip = new \ZipArchive();
-        if ($zip->open($tmpZip) === TRUE) {
-            $zip->extractTo($installPath);
-            $zip->close();
-            File::delete($tmpZip);
-        } else {
-            File::delete($tmpZip);
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Unable to unzip installer file!',
-                'errors'  => ['download_url' => 'Extract installer failed!']
-            ]);
-        }
-    }*/
 
     try {
         $dsn = "mysql:host={$data['database_host']};dbname={$data['database_name']};charset=utf8";
@@ -225,17 +185,49 @@ $this->router->post('/', function (Request $request) {
 
     insertPurchaseAddon($pdo, [
         'product_id'    => $verifyResult['product_id'],
-        'version'       => $verifyResult['version'],
         'module_name'   => 'main',
         'purchase_code' => $data['purchase_code'],
         'version'       => $verifyResult['version'] ?? '1.0',
         'install_path'  => $verifyResult['install_path'] ?? '',
     ]);
-        
+
+    // Persist APP_INSTALLED=true to Railway env vars so it survives redeployments
+    $railwayToken     = getenv('RAILWAY_API_TOKEN');
+    $railwayProjectId = getenv('RAILWAY_PROJECT_ID');
+    $railwayEnvId     = getenv('RAILWAY_ENVIRONMENT_ID');
+    $railwayServiceId = getenv('RAILWAY_SERVICE_ID');
+
+    if ($railwayToken && $railwayProjectId && $railwayEnvId && $railwayServiceId) {
+        try {
+            Http::withoutVerifying()
+                ->withHeaders(['Authorization' => 'Bearer ' . $railwayToken])
+                ->timeout(10)
+                ->post('https://backboard.railway.app/graphql/v2', [
+                    'query' => 'mutation VariableCollectionUpsert($input: VariableCollectionUpsertInput!) { variableCollectionUpsert(input: $input) }',
+                    'variables' => [
+                        'input' => [
+                            'projectId'     => $railwayProjectId,
+                            'environmentId' => $railwayEnvId,
+                            'serviceId'     => $railwayServiceId,
+                            'variables'     => ['APP_INSTALLED' => 'true'],
+                        ]
+                    ]
+                ]);
+        } catch (\Exception $e) {
+            error_log('Railway API update failed: ' . $e->getMessage());
+        }
+    }
 
     return new JsonResponse([
         'success' => true,
         'message' => 'Installation successful!'
     ]);
+};
 
-});
+// Register routes for both direct access (/) and nginx-proxied access (/installer, /installer/)
+$this->router->get('/', $getHandler);
+$this->router->get('/installer', $getHandler);
+$this->router->get('/installer/', $getHandler);
+$this->router->post('/', $postHandler);
+$this->router->post('/installer', $postHandler);
+$this->router->post('/installer/', $postHandler);
