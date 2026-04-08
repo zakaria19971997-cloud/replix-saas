@@ -4,6 +4,9 @@ set -e
 echo "==> Copying nginx config..."
 cp /var/www/html/docker/nginx.conf /etc/nginx/sites-available/default
 
+echo "==> Discovering packages..."
+php artisan package:discover --ansi || true
+
 echo "==> Caching Laravel config..."
 php artisan config:cache
 php artisan route:cache

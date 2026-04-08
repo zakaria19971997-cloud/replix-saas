@@ -31,9 +31,9 @@ WORKDIR /var/www/html
 # Copy full application (needed because composer merge-plugin reads modules/*/composer.json)
 COPY . .
 
-# PHP dependencies
+# PHP dependencies (--no-scripts: skip artisan package:discover, runs at startup)
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
-    --optimize-autoloader --no-dev --no-interaction
+    --optimize-autoloader --no-dev --no-interaction --no-scripts
 
 # JS assets build
 RUN npm install && npm run build
