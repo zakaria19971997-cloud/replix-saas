@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 class AdminMarketplaceController extends Controller
 {
-    protected const API_BASE_URL = 'https://stackposts.com/api/marketplace/';
+    protected const API_BASE_URL = 'https://replix.app/api/marketplace/';
 
     public function addons(Request $request)
     {

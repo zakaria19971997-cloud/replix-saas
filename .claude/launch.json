@@ -1,0 +1,33 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Laravel Vite (frontend dev)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--theme=guest/waziper"],
+      "cwd": "Install",
+      "port": 5173
+    },
+    {
+      "name": "WhatsApp Server",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--no-warnings", "app.js"],
+      "cwd": "whatsapp_server",
+      "port": 8000
+    },
+    {
+      "name": "Laravel artisan serve",
+      "runtimeExecutable": "php",
+      "runtimeArgs": ["artisan", "serve", "--port=8080"],
+      "cwd": "Install",
+      "port": 8080
+    },
+    {
+      "name": "Laravel Queue Worker",
+      "runtimeExecutable": "php",
+      "runtimeArgs": ["artisan", "queue:work", "--sleep=3", "--tries=3"],
+      "cwd": "Install",
+      "port": null
+    }
+  ]
+}

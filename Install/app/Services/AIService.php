@@ -162,7 +162,7 @@ class AIService
 
     public function getLatestModels(): array
     {
-        $url = 'https://stackposts.com/ai_models.json';
+        $url = 'https://replix.app/ai_models.json';
         $response = Http::timeout(30)->get($url);
 
         if ($response->failed()) {
