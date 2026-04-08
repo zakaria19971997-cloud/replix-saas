@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <title>Installer</title>
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <meta name="base-url" content="{{ current_url() }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
@@ -135,9 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
         
-        const baseUrl = document.querySelector('meta[name="base-url"]')?.content || '';
-
-        fetch(`${baseUrl}`, {
+        fetch(window.location.href, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
