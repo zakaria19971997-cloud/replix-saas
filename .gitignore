@@ -1,0 +1,26 @@
+# Laravel
+Install/vendor/
+Install/node_modules/
+Install/public/build/
+Install/storage/*.key
+Install/.env
+Install/.env.backup
+Install/.env.production
+Install/.phpunit.result.cache
+Install/auth.json
+Install/storage/pail/
+
+# WhatsApp server
+whatsapp_server/node_modules/
+whatsapp_server/sessions/
+whatsapp_server/.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

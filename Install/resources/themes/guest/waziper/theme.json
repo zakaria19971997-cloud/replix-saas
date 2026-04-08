@@ -1,0 +1,8 @@
+{
+  "name": "Waziper",
+  "description": "Waziper is a WhatsApp-focused guest theme with a clean SaaS layout, green brand accents, and conversion-oriented authentication screens for messaging and marketing platforms.",
+  "version": "1.0.0",
+  "author": "StackPosts",
+  "preview": "preview.png",
+  "tags": ["whatsapp", "marketing", "saas", "automation", "dashboard"]
+}
