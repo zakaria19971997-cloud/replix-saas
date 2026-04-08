@@ -51,6 +51,9 @@ $app = Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
 
+        // Trust Railway's reverse proxy (fixes ERR_TOO_MANY_REDIRECTS)
+        $middleware->trustProxies(at: '*');
+
         $middleware->append(Themes::class);
         
         $middleware->web(append: [
